@@ -1,0 +1,11 @@
+---
+layout: post
+title:  "Retrieving all SObject fields!"
+date:   2019-06-26 01:25:15 +0530
+categories: jekyll update
+---
+<p> Get all Fields for any SObject via this method<br><br>
+Map<String, Schema.SobjectType> schemaMap = Schema.getGlobalDescribe();<br>
+Schema.SObjectType objectSchema = schemaMap.get(objName);<br>
+Map<String, Schema.SObjectFields> fieldsMap = objectSchema.getDescribe().getFields.getMap();<br>
+Set<String> fieldsList = fieldsMap.keySet();  </p>
