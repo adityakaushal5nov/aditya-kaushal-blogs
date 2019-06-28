@@ -4,8 +4,24 @@ title:  "Retrieving all SObject fields!"
 date:   2019-06-26 01:25:15 +0530
 categories: jekyll update
 ---
-<p> Get all Fields for any SObject via this method<br><br>
-Map<String, Schema.SobjectType> schemaMap = Schema.getGlobalDescribe();<br>
-Schema.SObjectType objectSchema = schemaMap.get(objName);<br>
-Map<String, Schema.SObjectFields> fieldsMap = objectSchema.getDescribe().getFields.getMap();<br>
-Set<String> fieldsList = fieldsMap.keySet();  </p>
+<p>  At some point you may require all the fields for an object and display data only for specific feilds and this may change 
+    with the requirement. A usecase would be in Lightning DataTables. Querying Schema class is the solution but its a 
+    whole deep pool of maps, wherein you need to drill down deep. Here, I will share my technique.<br><br>
+    
+    I like to combine it the Singleton pattern and boom we have a cocktail of good oops practice.<br><br>
+  
+ class Utility{<br><br>
+        
+        private static Set<String> fieldList;<br><br>
+
+        public Set<String> getAllFields(String objName){<br><br>
+        
+            if(fieldList == NULL){<br>
+                Map<String, Schema.SobjectType> schemaMap = Schema.getGlobalDescribe();<br>
+                Schema.SObjectType objectSchema = schemaMap.get(objName);<br>
+                Map<String, Schema.SObjectFields> fieldsMap = objectSchema.getDescribe().getFields.getMap();<br>
+                fieldsList = fieldsMap.keySet(); <br>
+            }<br>
+            return fieldList;<br>
+        }    <br>
+  }</p>
