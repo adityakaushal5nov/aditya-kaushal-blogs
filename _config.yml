@@ -16,8 +16,7 @@
 title: Lightning Zeus
 email: kaushal.aditya5nov@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-   I here my insights in the field of software development which I am gaining each day in
-  my career. Give it read and share your reviews here. 
+   I here my insights in the field of software development which I am gaining each day in my career. Give it read and share your reviews here. 
 baseurl: "/aditya-kaushal-blogs" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
