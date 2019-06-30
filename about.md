@@ -14,7 +14,7 @@ You can find some of my open source projects at GitHub:
 [GitHub](https://github.com/adityakaushal5nov)
 
 Apart from coding I enjoy travel Photography:
-[Instagram](i_was_here_and_i_saw_it)
+[Instagram](https://www.instagram.com/i_was_here_and_i_saw_it)
 
 You may take a look at my resume here
 [Resume]()
