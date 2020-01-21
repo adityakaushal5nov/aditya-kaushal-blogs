@@ -11,17 +11,18 @@ categories: jekyll update
     I like to combine it the Singleton pattern and boom we have a cocktail of good oops practice.<br><br>
   
  class Utility{<br><br>
-        
-        private static Set<String> fieldList;<br><br>
+        &nbsp;
+ &nbsp;&nbsp;      private static Set<String> fieldList;<br><br>
 
-        public Set<String> getAllFields(String objName){<br><br>
+ &nbsp;&nbsp;      public Set<String> getAllFields(String objName){<br><br>
         
-            if(fieldList == NULL){<br>
-                Map<String, Schema.SobjectType> schemaMap = Schema.getGlobalDescribe();<br>
-                Schema.SObjectType objectSchema = schemaMap.get(objName);<br>
-                Map<String, Schema.SObjectFields> fieldsMap = objectSchema.getDescribe().getFields.getMap();<br>
-                fieldsList = fieldsMap.keySet(); <br>
-            }<br>
-            return fieldList;<br>
-        }    <br>
+ &nbsp;&nbsp;          if(fieldList == NULL){<br>
+ &nbsp;&nbsp;&nbsp;              Map<String, Schema.SobjectType> schemaMap = Schema.getGlobalDescribe();<br>
+ &nbsp;&nbsp;&nbsp;              Schema.SObjectType objectSchema = schemaMap.get(objName);<br>
+ &nbsp;&nbsp;&nbsp;              Map<String, Schema.SObjectFields> fieldsMap = objectSchema.getDescribe().getFields.getMap();<br>
+ &nbsp;&nbsp;&nbsp;              fieldsList = fieldsMap.keySet(); <br>
+ &nbsp;&nbsp;&nbsp;              return fieldList;<br>
+ &nbsp;&nbsp;           }<br>
+ &nbsp;&nbsp;           return fieldList;<br>
+ &nbsp;       }    <br>
   }</p>
