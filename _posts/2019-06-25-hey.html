@@ -12,14 +12,14 @@ categories: jekyll update
  <i>
  class Utility{<br><br>
         
- &nbsp;&nbsp;      private static Set<String> fieldList;<br><br>
+ &nbsp;&nbsp;      private static Set&lt<String>&gt fieldList;<br><br>
 
- &nbsp;&nbsp;      public Set<String> getAllFields(String objName){<br>
+ &nbsp;&nbsp;      public Set&lt<String>&gt getAllFields(String objName){<br>
 
  &nbsp;&nbsp;&nbsp;&nbsp;          if(fieldList == NULL){<br>
- &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;               Map<String, Schema.SobjectType> schemaMap = Schema.getGlobalDescribe();<br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;               Map&lt<String, Schema.SobjectType>&gt schemaMap = Schema.getGlobalDescribe();<br>
  &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;               Schema.SObjectType objectSchema = schemaMap.get(objName);<br>
- &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;               Map<String, Schema.SObjectFields> fieldsMap = objectSchema.getDescribe().getFields.getMap();<br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;               Map &lt<String, Schema.SObjectFields>&gt fieldsMap = objectSchema.getDescribe().getFields.getMap();<br>
  &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;               fieldsList = fieldsMap.keySet(); <br>
  &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;               return fieldList;<br>
  &nbsp;&nbsp;&nbsp; &nbsp;            }<br>
