@@ -1,0 +1,277 @@
+---
+layout: post
+title:  "SpaceShipSurfer!"
+date:   2025-06-20 01:25:15 +0530
+categories: jekyll update
+---
+    <!DOCTYPE html>
+<html>
+<head>
+    <title>StarSurfer</title>
+    <style>
+        canvas { border: 1px solid black; display: block; margin: auto; }
+        body { margin: 0; background: #1a1a1a; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Game state
+        let ship = { x: 100, y: 200, vy: 0, width: 30, height: 20, isRising: false };
+        let asteroids = [];
+        let orbs = [];
+        let particles = [];
+        let stars = [];
+        let score = 0;
+        let gameOver = false;
+        let speed = 2;
+        let thrusterOpacity = 0.5;
+        let pulse = 1; // For orb and text animation
+
+        // Initialize starry background
+        for (let i = 0; i < 50; i++) {
+            stars.push({ x: Math.random() * 800, y: Math.random() * 400, size: Math.random() * 2 });
+        }
+
+        // Input handling
+        document.addEventListener('click', () => ship.isRising = !ship.isRising);
+        document.addEventListener('keydown', (e) => { if (e.code === 'Space') ship.isRising = !ship.isRising; });
+
+        // Spawn asteroids and orbs
+        function spawnAsteroid() {
+            const size = 20 + Math.random() * 40;
+            asteroids.push({ x: 800, y: Math.random() * (400 - size), width: size, height: size, angle: 0 });
+        }
+        function spawnOrb() {
+            orbs.push({ x: 800, y: Math.random() * 400, radius: 5 });
+        }
+        function spawnParticles(x, y, count, color) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * 5,
+                    vy: (Math.random() - 0.5) * 5,
+                    size: 2 + Math.random() * 3,
+                    life: 20,
+                    color
+                });
+            }
+        }
+
+        // Update game state
+        function update() {
+            if (gameOver) return;
+
+            // Ship movement
+            ship.vy = ship.isRising ? -3 : 3;
+            ship.y += ship.vy;
+            if (ship.y < 0) ship.y = 0;
+            if (ship.y > 400 - ship.height) ship.y = 400 - ship.height;
+
+            // Thruster and orb pulse animation
+            thrusterOpacity = 0.5 + Math.sin(Date.now() / 100) * 0.2;
+            pulse = 0.8 + Math.sin(Date.now() / 200) * 0.2;
+
+            // Update stars (scrolling background)
+            stars.forEach(s => {
+                s.x -= 0.5;
+                if (s.x < 0) s.x += 800;
+            });
+
+            // Spawn obstacles
+            if (Math.random() < 0.02) spawnAsteroid();
+            if (Math.random() < 0.01) spawnOrb();
+
+            // Update asteroids
+            asteroids.forEach(a => {
+                a.x -= speed;
+                a.angle += 0.02;
+            });
+            asteroids = asteroids.filter(a => a.x + a.width > 0);
+
+            // Update orbs
+            orbs.forEach(o => o.x -= speed);
+            orbs = orbs.filter(o => o.x + o.radius > 0);
+
+            // Update particles
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life--;
+            });
+            particles = particles.filter(p => p.life > 0);
+
+            // Collision detection
+            asteroids.forEach(a => {
+                if (ship.x < a.x + a.width && ship.x + ship.width > a.x &&
+                    ship.y < a.y + a.height && ship.y + ship.height > a.y) {
+                    gameOver = true;
+                    spawnParticles(ship.x, ship.y, 20, '#f00'); // Crash particles
+                }
+            });
+
+            // Orb collection
+            orbs = orbs.filter(o => {
+                if (Math.hypot(ship.x + ship.width / 2 - o.x, ship.y + ship.height / 2 - o.y) < 20) {
+                    score += 10;
+                    spawnParticles(o.x, o.y, 10, '#0ff'); // Collection particles
+                    return false;
+                }
+                return true;
+            });
+
+            // Increase difficulty
+            speed += 0.001;
+            score += 0.1;
+        }
+
+        // Render ship
+        function renderShip() {
+            ctx.save();
+            ctx.translate(ship.x, ship.y);
+
+            // Thruster
+            ctx.fillStyle = `rgba(255, 165, 0, ${thrusterOpacity})`;
+            ctx.fillRect(-10, ship.height / 2 - 2, 10, 4);
+
+            // Ship body with gradient
+            const gradient = ctx.createLinearGradient(0, 0, ship.width, ship.height);
+            gradient.addColorStop(0, '#ccc');
+            gradient.addColorStop(1, '#fff');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.moveTo(0, 0); // Nose
+            ctx.lineTo(ship.width, ship.height / 2); // Right wing
+            ctx.lineTo(0, ship.height); // Bottom
+            ctx.closePath();
+            ctx.fill();
+
+            // Glow effect
+            ctx.shadowColor = '#fff';
+            ctx.shadowBlur = 5;
+            ctx.fill();
+
+            // Cockpit
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#f00';
+            ctx.beginPath();
+            ctx.arc(ship.width * 0.3, ship.height / 2, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Trail
+            ctx.strokeStyle = `rgba(255, 255, 255, 0.3)`;
+            ctx.beginPath();
+            ctx.moveTo(-10, ship.height / 2);
+            ctx.lineTo(-20, ship.height / 2);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // Render asteroid
+        function renderAsteroid(a) {
+            ctx.save();
+            ctx.translate(a.x + a.width / 2, a.y + a.height / 2);
+            ctx.rotate(a.angle);
+            ctx.fillStyle = '#666';
+            ctx.beginPath();
+            ctx.moveTo(-a.width / 2, 0);
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI * 2;
+                const radius = (a.width / 2) * (0.8 + Math.random() * 0.4);
+                ctx.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // Render game
+        function render() {
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, 800, 400);
+
+            // Draw stars
+            ctx.fillStyle = '#fff';
+            stars.forEach(s => {
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw ship
+            renderShip();
+
+            // Draw asteroids
+            asteroids.forEach(a => renderAsteroid(a));
+
+            // Draw orbs with glow
+            ctx.shadowColor = '#0ff';
+            ctx.shadowBlur = 10 * pulse;
+            ctx.fillStyle = '#0ff';
+            orbs.forEach(o => {
+                ctx.beginPath();
+                ctx.arc(o.x, o.y, o.radius * pulse, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.shadowBlur = 0;
+
+            // Draw particles
+            particles.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw score
+            ctx.fillStyle = `rgba(255, 255, 255, ${pulse})`;
+            ctx.font = '20px "Orbitron", Arial';
+            ctx.fillText(`Score: ${Math.floor(score)}`, 10, 30);
+
+            // Game over screen
+            if (gameOver) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${pulse})`;
+                ctx.font = '30px "Orbitron", Arial';
+                ctx.fillText('Game Over! Click to Restart', 250, 200);
+            }
+        }
+
+        // Game loop
+        function gameLoop() {
+            update();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Restart on click
+        document.addEventListener('click', () => {
+            if (gameOver) {
+                ship.y = 200;
+                asteroids = [];
+                orbs = [];
+                particles = [];
+                score = 0;
+                speed = 2;
+                gameOver = false;
+            }
+        });
+
+        // Start spawning
+        setInterval(spawnAsteroid, 1000);
+        setInterval(spawnOrb, 3000);
+
+        // Load custom font (fallback to Arial)
+        const link = document.createElement('link');
+        link.href = 'https://fonts.googleapis.com/css2?family=Orbitron&display=swap';
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+
+        // Start game
+        gameLoop();
+    </script>
+</body>
+</html>
